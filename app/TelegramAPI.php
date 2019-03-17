@@ -26,7 +26,17 @@ class TelegramAPI
 
     public function getUpdates()
     {
-        $response = $this->client->get($this->base_endpoint . $this->bot_api_key . '/getUpdates');
+        $offset = 0;
+
+        $lastUpdate = TelegramUpdate::orderBy('id', 'desc')->first();
+
+        if ($lastUpdate) {
+            $offset = $lastUpdate->id + 1;
+        }
+
+        $response = $this->client->get($this->base_endpoint . $this->bot_api_key . '/getUpdates', [
+            'offset' => $offset
+        ]);
 
         if ($response->getStatusCode() != 200) {
             throw new \Exception("Telegram has responded with non 200 code.");
@@ -45,6 +55,8 @@ class TelegramAPI
 
     public function processUpdates()
     {
+        $prepared = collect([]);
+
         if (count($this->updates) > 0) {
             foreach ($this->updates as $update) {
                 $telegramUpdate = TelegramUpdate::where('id', $update->update_id)->first();
@@ -114,16 +126,18 @@ class TelegramAPI
                             $telegramMessage = TelegramMessage::where('id', $message->message_id)->first();
                         }
 
-                        TelegramUpdate::create([
+                        $telegramUpdate = TelegramUpdate::create([
                             'id' => $update->update_id,
                             'chat_id' => $chat->id,
                             'message_id' => $telegramMessage->id
                         ]);
+
+                        $prepared->push($telegramUpdate);
                     }
                 }
             }
         }
 
-        return true;
+        return $prepared;
     }
 }

@@ -25,6 +25,8 @@ class BotController extends Controller
 
     public function update()
     {
-        return response()->json(['success' => $this->telegram->getUpdates()->processUpdates()]);
+        $updates = $this->telegram->getUpdates()->processUpdates();
+
+        return response()->json(['success' => count($updates) > 0, 'updates' => $updates]);
     }
 }
