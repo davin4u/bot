@@ -26,16 +26,12 @@ class BotController extends Controller
 
     public function update()
     {
-        $endpoint = 'https://api.telegram.org/bot830352977:AAHrtTNSqkMxcByIJLgXLeHAdVCD9infZtY/getUpdates';
-
-        $response = file_get_contents($endpoint);
-
-        dd($response);
-
         try {
             $this->telegram->enableMySql($this->credentials);
 
-            $this->telegram->handleGetUpdates();
+            $response = $this->telegram->handleGetUpdates();
+
+            dd($response);
         } catch (Longman\TelegramBot\Exception\TelegramException $e) {
             return response(['error' => $e->getMessage()]);
         }
