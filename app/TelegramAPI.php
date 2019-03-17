@@ -46,21 +46,75 @@ class TelegramAPI
     {
         if (count($this->updates) > 0) {
             foreach ($this->updates as $update) {
-                $message = $update->message;
+                $telegramUpdate = TelegramUpdate::where('id', $update->update_id)->first();
 
-                if (property_exists($message, "from")) {
-                    $from = $message->from;
+                if ($telegramUpdate) {
+                    continue;
+                }
 
-                    $user = TelegramUser::where('id', $from->id)->first();
+                if (property_exists($update, "message")) {
+                    $message = $update->message;
+                    $user = null;
+                    $chat = null;
 
-                    if (! $user) {
-                        $user = TelegramUser::create([
-                            'id' => $from->id,
-                            'is_bot' => $from->is_bot,
-                            'first_name' => $from->first_name,
-                            'last_name' => $from->last_name,
-                            'username' => $from->username,
-                            'language_code' => $from->language_code
+
+
+                    if (property_exists($message, "from")) {
+                        $from = $message->from;
+
+                        $user = TelegramUser::where('id', $from->id)->first();
+
+                        if (! $user) {
+                            $user = TelegramUser::create([
+                                'id' => $from->id,
+                                'is_bot' => $from->is_bot,
+                                'first_name' => $from->first_name,
+                                'last_name' => $from->last_name,
+                                'username' => $from->username,
+                                'language_code' => $from->language_code
+                            ]);
+                        }
+                    }
+
+                    if (property_exists($message, "chat")) {
+                        $chat = TelegramChat::where('id', $message->chat->id)->first();
+
+                        if (! $chat) {
+                            $chat = TelegramChat::create([
+                                'id' => $message->chat->id,
+                                'type' => $message->chat->type,
+                                'title' => $message->chat->type == 'private' ? NULL : $message->chat->title,
+                                'username' => $message->chat->type != 'private' ? NULL : $message->chat->username
+                            ]);
+                        }
+                    }
+
+                    if ($user && $chat) {
+                        $user_chat = UserChat::where('user_id', $user->id)->where('chat_id', $chat->id)->first();
+
+                        if (! $user_chat) {
+                            $user_chat = UserChat::create([
+                                'user_id' => $user->id,
+                                'chat_id' => $chat->id
+                            ]);
+                        }
+
+                        $message = TelegramMessage::where('id', $message->message_id)->where('chat_id', $chat->id)->first();
+
+                        if (! $message) {
+                            $message = TelegramMessage::create([
+                                'id' => $message->message_id,
+                                'chat_id' => $chat->id,
+                                'user_id' => $user->id,
+                                'date' => $message->date,
+                                'text' => $message->text
+                            ]);
+                        }
+
+                        TelegramUpdate::create([
+                            'id' => $update->update_id,
+                            'chat_id' => $chat->id,
+                            'message_id' => $message->id
                         ]);
                     }
                 }
