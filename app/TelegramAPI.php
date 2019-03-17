@@ -28,7 +28,7 @@ class TelegramAPI
 
         return [
             'status' => $response->getStatusCode(),
-            'body' => $response->getBody()->getContents()
+            'body' => json_decode($response->getBody()->getContents())
         ];
     }
 }
