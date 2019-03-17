@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Longman\TelegramBot\Telegram;
 use App\TelegramAPI;
 
 class BotController extends Controller
@@ -22,26 +20,11 @@ class BotController extends Controller
             'database' => env('DB_DATABASE'),
         ];
 
-        //$this->telegram = new Telegram(env('BOT_API_KEY'), env('BOT_USERNAME'));
-
         $this->telegram = new TelegramAPI(env('BOT_USERNAME'), env('BOT_API_KEY'));
     }
 
     public function update()
     {
-        dd($this->telegram->getUpdates());
-
-        /*
-        try {
-            $this->telegram->enableMySql($this->credentials);
-
-            $response = $this->telegram->handleGetUpdates();
-
-            dd($response);
-        } catch (Longman\TelegramBot\Exception\TelegramException $e) {
-            return response(['error' => $e->getMessage()]);
-        }
-
-        return response(['success' => true]);*/
+        return response()->json(['success' => $this->telegram->getUpdates()->processUpdates()]);
     }
 }
