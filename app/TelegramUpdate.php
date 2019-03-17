@@ -9,4 +9,6 @@ class TelegramUpdate extends Model
     protected $table = 'telegram_update';
 
     protected $fillable = ['id', 'chat_id', 'message_id'];
+
+    public $timestamps = false;
 }
