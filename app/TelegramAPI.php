@@ -103,13 +103,15 @@ class TelegramAPI
                         $telegramMessage = TelegramMessage::where('id', $message->message_id)->where('chat_id', $chat->id)->first();
 
                         if (! $telegramMessage) {
-                            $telegramMessage = TelegramMessage::create([
+                            TelegramMessage::create([
                                 'id' => $message->message_id,
                                 'chat_id' => $chat->id,
                                 'user_id' => $user->id,
                                 'date' => Carbon::createFromTimestamp($message->date)->toDateTimeString(),
                                 'text' => $message->text
                             ]);
+
+                            $telegramMessage = TelegramUpdate::where('id', $message->message_id)->first();
                         }
 
                         TelegramUpdate::create([
