@@ -10,5 +10,5 @@ class UserChat extends Model
 
     protected $fillable = ['user_id', 'chat_id'];
 
-    protected $timestamps = false;
+    public $timestamps = false;
 }
