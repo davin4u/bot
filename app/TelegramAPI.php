@@ -3,6 +3,7 @@
 namespace App;
 
 use GuzzleHttp\Client;
+use Carbon\Carbon;
 
 class TelegramAPI
 {
@@ -106,7 +107,7 @@ class TelegramAPI
                                 'id' => $message->message_id,
                                 'chat_id' => $chat->id,
                                 'user_id' => $user->id,
-                                'date' => $message->date,
+                                'date' => Carbon::createFromTimestamp($message->date)->toDateTimeString(),
                                 'text' => $message->text
                             ]);
                         }
