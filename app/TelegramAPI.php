@@ -140,4 +140,12 @@ class TelegramAPI
 
         return $prepared;
     }
+
+    public function sendMessage($chat_id, $text)
+    {
+        $response = $this->client->post($this->base_endpoint . $this->bot_api_key . '/sendMessage', [
+            'chat_id' => $chat_id,
+            'text' => $text
+        ]);
+    }
 }
