@@ -111,7 +111,7 @@ class TelegramAPI
                                 'text' => $message->text
                             ]);
 
-                            $telegramMessage = TelegramUpdate::where('id', $message->message_id)->first();
+                            $telegramMessage = TelegramMessage::where('id', $message->message_id)->first();
                         }
 
                         TelegramUpdate::create([
