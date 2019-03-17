@@ -99,10 +99,10 @@ class TelegramAPI
                             ]);
                         }
 
-                        $message = TelegramMessage::where('id', $message->message_id)->where('chat_id', $chat->id)->first();
+                        $telegramMessage = TelegramMessage::where('id', $message->message_id)->where('chat_id', $chat->id)->first();
 
-                        if (! $message) {
-                            $message = TelegramMessage::create([
+                        if (! $telegramMessage) {
+                            $telegramMessage = TelegramMessage::create([
                                 'id' => $message->message_id,
                                 'chat_id' => $chat->id,
                                 'user_id' => $user->id,
@@ -114,7 +114,7 @@ class TelegramAPI
                         TelegramUpdate::create([
                             'id' => $update->update_id,
                             'chat_id' => $chat->id,
-                            'message_id' => $message->id
+                            'message_id' => $telegramMessage->id
                         ]);
                     }
                 }
