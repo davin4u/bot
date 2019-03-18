@@ -115,15 +115,24 @@ class TelegramAPI
                         $telegramMessage = TelegramMessage::where('id', $message->message_id)->where('chat_id', $chat->id)->first();
 
                         if (! $telegramMessage) {
+                            $entities = [];
+
+                            if (property_exists($message, "entities")) {
+                                $entities = $message->entities;
+                            }
+
                             TelegramMessage::create([
                                 'id' => $message->message_id,
                                 'chat_id' => $chat->id,
                                 'user_id' => $user->id,
                                 'date' => Carbon::createFromTimestamp($message->date)->toDateTimeString(),
-                                'text' => $message->text
+                                'text' => $message->text,
+                                'entities' => $entities
                             ]);
 
                             $telegramMessage = TelegramMessage::where('id', $message->message_id)->first();
+
+                            $telegramMessage->process();
                         }
 
                         $telegramUpdate = TelegramUpdate::create([
