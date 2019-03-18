@@ -27,10 +27,6 @@ class BotController extends Controller
     {
         $updates = $this->telegram->getUpdates()->processUpdates();
 
-        if (count($updates) > 0) {
-            $this->telegram->sendMessage('454018476', 'New Message was stored');
-        }
-
         return response()->json(['success' => count($updates) > 0, 'updates' => $updates]);
     }
 }
