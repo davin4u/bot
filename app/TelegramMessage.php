@@ -27,8 +27,8 @@ class TelegramMessage extends Model
     {
         if (! empty($this->entities)) {
             foreach ($this->entities as $entity) {
-                if ($entity->type == 'bot_command') {
-                    return substr($this->text, $entity->offset + 1, $entity->length - 1);
+                if ($entity['type'] == 'bot_command') {
+                    return substr($this->text, $entity['offset'] + 1, $entity['length'] - 1);
                 }
             }
         }

@@ -40,8 +40,8 @@ class AddrssCommand
     {
         if (! empty($this->message->entities)) {
             foreach ($this->message->entities as $entity) {
-                if ($entity->type == 'url') {
-                    return substr($this->message->text, $entity->offset, $entity->length);
+                if ($entity['type'] == 'url') {
+                    return substr($this->message->text, $entity['offset'], $entity['length']);
                 }
             }
         }
