@@ -22,7 +22,7 @@ class PullCommand
                         ->select("feed_content_id")
                         ->where('user_id', $message->user_id)
                         ->where('viewed', 1)
-                        ->get()->implode("feed_content_status", ",");
+                        ->get()->pluck("feed_content_status")->toArray();
 
         $feeds = UserFeed::where('user_id', $message->user_id)->get()->pluck("feed_id")->toArray();
 
