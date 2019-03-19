@@ -24,7 +24,7 @@ class AddrssCommand
             }
 
             if ($this->message->user) {
-                $relation = UserFeed::where('user_id', $this->message->user->id)->where('feed_id', $feed->id);
+                    $relation = UserFeed::where('user_id', $this->message->user->id)->where('feed_id', $feed->id)->first();
 
                 if (! $relation) {
                     UserFeed::create([
