@@ -16,3 +16,5 @@ Route::get('/', function () {
 });
 
 Route::get('/update', 'BotController@update');
+
+Route::get('/update-feeds', 'BotController@updateFeedContents');
