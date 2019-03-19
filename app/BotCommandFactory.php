@@ -4,7 +4,7 @@ namespace App;
 
 class BotCommandFactory
 {
-    protected static $commandsNamespace = 'App\\BotCommand';
+    protected static $commandsNamespace = 'App\\BotCommands';
 
     public static function get($name)
     {
