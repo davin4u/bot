@@ -28,7 +28,9 @@ class Feed extends Model
 
         if (! empty($rss)) {
             foreach ($rss as $item) {
-                FeedContent::create(array_merge($item, ['feed_id' => $this->id]));
+                if (! FeedContent::checkIfExists($item)) {
+                    FeedContent::create(array_merge($item, ['feed_id' => $this->id]));
+                }
             }
         }
     }

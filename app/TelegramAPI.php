@@ -17,10 +17,10 @@ class TelegramAPI
 
     protected $updates = [];
 
-    public function __construct($bot_username, $bot_api_key)
+    public function __construct()
     {
-        $this->bot_username = $bot_username;
-        $this->bot_api_key  = $bot_api_key;
+        $this->bot_username = env('BOT_USERNAME');
+        $this->bot_api_key  = env('BOT_API_KEY');
         $this->client       = new Client();
     }
 

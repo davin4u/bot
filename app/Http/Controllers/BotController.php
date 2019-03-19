@@ -2,26 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\BotCommands\PullCommand;
 use App\Feed;
 use App\TelegramAPI;
+use App\TelegramMessage;
 
 class BotController extends Controller
 {
-    protected $credentials = [];
-
     protected $telegram = null;
 
-    public function __construct()
+    public function __construct(TelegramAPI $telegram)
     {
-        $this->credentials = [
-            'host'     => env('DB_HOST'),
-            'port'     => 3306,
-            'user'     => env('DB_USERNAME'),
-            'password' => env('DB_PASSWORD'),
-            'database' => env('DB_DATABASE'),
-        ];
-
-        $this->telegram = new TelegramAPI(env('BOT_USERNAME'), env('BOT_API_KEY'));
+        $this->telegram = $telegram;
     }
 
     public function update()
