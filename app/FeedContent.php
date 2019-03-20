@@ -36,8 +36,6 @@ class FeedContent extends Model
 
     public function getFormattedMessage()
     {
-        return '<b>' . $this->title . '</b>'
-                . "%0A" . $this->description . "%0A"
-                . '<a href="' . $this->link . '">' . $this->link . '</a>';
+        return "<b>$this->title</b>\n{$this->description}\n<a href='{$this->link}'>{$this->link}</a>";
     }
 }
