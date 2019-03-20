@@ -155,7 +155,8 @@ class TelegramAPI
         $response = $this->client->post($this->base_endpoint . $this->bot_api_key . '/sendMessage', [
             'form_params' => [
                 'chat_id' => $chat_id,
-                'text' => $text
+                'text' => $text,
+                'parse_mode' => 'html'
             ]
         ]);
     }
