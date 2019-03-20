@@ -36,6 +36,6 @@ class FeedContent extends Model
 
     public function getFormattedMessage()
     {
-        return '<b>' . $this->title . '</b><p>' . $this->description . '<p><a href="' . $this->link . '">' . $this->link . '</a>';
+        return '<b>' . $this->title . '</b>' . urlencode('\n' . $this->description . '\n') . '<a href="' . $this->link . '">' . $this->link . '</a>';
     }
 }
