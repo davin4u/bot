@@ -28,7 +28,7 @@ class PullCommand
 
         $content = FeedContent::whereIn('feed_id', $feeds)->whereNotIn('id', $viewed)->first();
 
-        dd($feeds, $content);
+        dd($feeds, $viewed);
 
         if ($content) {
             $content->setViewedBy($message->user_id);
