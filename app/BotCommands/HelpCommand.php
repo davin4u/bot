@@ -5,7 +5,7 @@ namespace App\BotCommands;
 use App\TelegramAPI;
 use App\TelegramMessage;
 
-class PullCommand
+class HelpCommand
 {
     protected $message;
 
