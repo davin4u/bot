@@ -31,5 +31,7 @@ class HelpCommand
         foreach ($this->commands as $command => $description) {
             $text .= "<b>{$command}</b>: {$description}\n";
         }
+
+        return $text;
     }
 }

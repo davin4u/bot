@@ -130,6 +130,7 @@ class TelegramAPI
                                 'entities' => $entities
                             ]);
 
+                            /** @var TelegramMessage $telegramMessage */
                             $telegramMessage = TelegramMessage::where('id', $message->message_id)->first();
 
                             $telegramMessage->process();

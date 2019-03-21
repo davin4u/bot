@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\BotCommands\PullCommand;
 use App\Feed;
 use App\TelegramAPI;
-use App\TelegramMessage;
 
 class BotController extends Controller
 {
