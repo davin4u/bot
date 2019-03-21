@@ -17,10 +17,13 @@ class TelegramAPI
 
     protected $updates = [];
 
+    protected $withInlineKeyboard = false;
+
     public function __construct()
     {
         $this->bot_username = env('BOT_USERNAME');
         $this->bot_api_key  = env('BOT_API_KEY');
+        $this->withInlineKeyboard = env('WITH_INLINE_KEYBOARD', false);
         $this->client       = new Client();
     }
 
@@ -114,7 +117,7 @@ class TelegramAPI
 
                         $telegramMessage = TelegramMessage::where('id', $message->message_id)->where('chat_id', $chat->id)->first();
 
-                        if (! $telegramMessage) {
+                        if (! $telegramMessage && property_exists($message, "text")) {
                             $entities = [];
 
                             if (property_exists($message, "entities")) {
@@ -160,5 +163,10 @@ class TelegramAPI
                 'parse_mode' => 'html'
             ]
         ]);
+    }
+
+    protected function getInlineKeyboard()
+    {
+
     }
 }
