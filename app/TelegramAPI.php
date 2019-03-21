@@ -84,10 +84,10 @@ class TelegramAPI
                             $user = TelegramUser::create([
                                 'id' => $from->id,
                                 'is_bot' => $from->is_bot,
-                                'first_name' => $from->first_name,
-                                'last_name' => $from->last_name,
-                                'username' => $from->username,
-                                'language_code' => $from->language_code
+                                'first_name' => property_exists($from, "first_name") ? $from->first_name : '',
+                                'last_name' => property_exists($from, "last_name") ? $from->last_name: '',
+                                'username' => property_exists($from, "username") ? $from->username: '',
+                                'language_code' => property_exists($from, "language_code") ? $from->language_code : ''
                             ]);
                         }
                     }
