@@ -26,12 +26,23 @@ class PullCommand
 
         $feeds = UserFeed::where('user_id', $message->user_id)->get()->pluck("feed_id")->toArray();
 
-        $content = FeedContent::whereIn('feed_id', $feeds)->whereNotIn('id', $viewed)->first();
+        $amount = (int) trim(str_replace('/pull', '', $message->text));
+
+        if (! $amount) {
+            $amount = 1;
+        }
+
+        $content = FeedContent::whereIn('feed_id', $feeds)
+                                ->whereNotIn('id', $viewed)
+                                ->offset(0)
+                                ->limit($amount);
 
         if ($content) {
-            $content->setViewedBy($message->user_id);
+            foreach ($content as $item) {
+                $item->setViewedBy($message->user_id);
 
-            $this->telegram->sendMessage($message->chat_id, $content->getFormattedMessage());
+                $this->telegram->sendMessage($message->chat_id, $item->getFormattedMessage());
+            }
         }
         else {
             $this->telegram->sendMessage($message->chat_id, "Nothing new...");
