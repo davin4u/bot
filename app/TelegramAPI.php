@@ -142,7 +142,7 @@ class TelegramAPI
                         $telegramUpdate = TelegramUpdate::create([
                             'id' => $update->update_id,
                             'chat_id' => $chat->id,
-                            'message_id' => $telegramMessage->id
+                            'message_id' => $telegramMessage ? $telegramMessage->id : $message->message_id
                         ]);
 
                         $prepared->push($telegramUpdate);
