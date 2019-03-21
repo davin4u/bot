@@ -35,7 +35,8 @@ class PullCommand
         $content = FeedContent::whereIn('feed_id', $feeds)
                                 ->whereNotIn('id', $viewed)
                                 ->offset(0)
-                                ->limit($amount);
+                                ->limit($amount)
+                                ->get();
 
         if ($content) {
             foreach ($content as $item) {
