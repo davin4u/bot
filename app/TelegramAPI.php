@@ -156,19 +156,31 @@ class TelegramAPI
         return $prepared;
     }
 
-    public function sendMessage($chat_id, $text)
+    public function sendMessage($chat_id, $text, $buttons = null)
     {
         $response = $this->client->post($this->base_endpoint . $this->bot_api_key . '/sendMessage', [
             'form_params' => [
                 'chat_id' => $chat_id,
-                'text' => $text,
-                'parse_mode' => 'html'
+                'text' => strip_tags($text, '<a><b><i><code><pre>'),
+                'parse_mode' => 'html',
+                'reply_markup' => $buttons
             ]
         ]);
     }
 
-    protected function getInlineKeyboard()
+    public function senMessageWithLikeButtons($chat_id, $text)
     {
+        $buttons = [
+            [
+                'text' => 'Like',
+                'callback_data' => '{"method":"like", "message_id":"1"}'
+            ],
+            [
+                'text' => 'Dislike',
+                'callback_data' => '{"method":"dislike", "message_id":"1"}'
+            ]
+        ];
 
+        $this->sendMessage($chat_id, $text);
     }
 }
