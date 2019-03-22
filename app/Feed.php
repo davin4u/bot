@@ -65,7 +65,16 @@ class Feed extends Model
 
         foreach (static::$xml_node_properties as $prop => $modelKey) {
             if (property_exists($node, $prop)) {
-                $result[$modelKey] = $prop == 'pubDate' ? Carbon::parse($node->{$prop})->toDateTimeString() : (string) $node->{$prop};
+                if ($prop == 'pubDate') {
+                    $result[$modelKey] = Carbon::parse($node->{$prop})->toDateTimeString();
+                }
+                else if ($prop == 'title') {
+                    $result[$modelKey] = (string) (strlen($node->{$prop}) > 250 ? (substr($node->{$prop}, 0, 247) . '...') : $node->{$prop});
+                }
+                else {
+                    $result[$modelKey] = $prop == 'pubDate' ? Carbon::parse($node->{$prop})->toDateTimeString() : (string) $node->{$prop};
+                }
+
             }
         }
 

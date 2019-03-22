@@ -129,7 +129,7 @@ class TelegramAPI
                                 'chat_id' => $chat->id,
                                 'user_id' => $user->id,
                                 'date' => Carbon::createFromTimestamp($message->date)->toDateTimeString(),
-                                'text' => strlen($message->text) > 250 ? (substr($message->text, 0, 247) . '...') : $message->text,
+                                'text' => $message->text,
                                 'entities' => $entities
                             ]);
 
