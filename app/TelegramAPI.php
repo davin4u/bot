@@ -73,15 +73,13 @@ class TelegramAPI
                     $user = null;
                     $chat = null;
 
-
-
                     if (property_exists($message, "from")) {
                         $from = $message->from;
 
                         $user = TelegramUser::where('id', $from->id)->first();
 
                         if (! $user) {
-                            $user = TelegramUser::create([
+                            TelegramUser::create([
                                 'id' => $from->id,
                                 'is_bot' => $from->is_bot,
                                 'first_name' => property_exists($from, "first_name") ? $from->first_name : '',
@@ -89,6 +87,8 @@ class TelegramAPI
                                 'username' => property_exists($from, "username") ? $from->username: '',
                                 'language_code' => property_exists($from, "language_code") ? $from->language_code : ''
                             ]);
+
+                            $user = TelegramUser::where('id', $from->id)->first();
                         }
                     }
 
@@ -129,7 +129,7 @@ class TelegramAPI
                                 'chat_id' => $chat->id,
                                 'user_id' => $user->id,
                                 'date' => Carbon::createFromTimestamp($message->date)->toDateTimeString(),
-                                'text' => $message->text,
+                                'text' => strlen($message->text) > 250 ? (substr($message->text, 0, 247) . '...') : $message->text,
                                 'entities' => $entities
                             ]);
 
