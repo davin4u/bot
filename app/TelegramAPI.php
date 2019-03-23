@@ -170,17 +170,21 @@ class TelegramAPI
 
     public function senMessageWithLikeButtons($chat_id, $text)
     {
-        $buttons = [
-            [
-                'text' => 'Like',
-                'callback_data' => '{"method":"like", "message_id":"1"}'
-            ],
-            [
-                'text' => 'Dislike',
-                'callback_data' => '{"method":"dislike", "message_id":"1"}'
-            ]
-        ];
+        $buttons = null;
 
-        $this->sendMessage($chat_id, $text);
+        if ($chat_id == env('OWN_CHAT_ID')) {
+            $buttons = [
+                [
+                    'text' => 'Like',
+                    'callback_data' => '{"method":"like", "message_id":"1"}'
+                ],
+                [
+                    'text' => 'Dislike',
+                    'callback_data' => '{"method":"dislike", "message_id":"1"}'
+                ]
+            ];
+        }
+
+        $this->sendMessage($chat_id, $text, $buttons);
     }
 }

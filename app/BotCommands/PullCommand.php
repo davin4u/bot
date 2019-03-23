@@ -42,7 +42,7 @@ class PullCommand
             foreach ($content as $item) {
                 $item->setViewedBy($message->user_id);
 
-                $this->telegram->sendMessage($message->chat_id, $item->getFormattedMessage());
+                $this->telegram->sendMessageWithLikeButtons($message->chat_id, $item->getFormattedMessage());
             }
         }
         else {
