@@ -176,12 +176,14 @@ class TelegramAPI
             $keyboard = [
                 'inline_keyboard' => [
                     [
-                        'text' => 'Like',
-                        'callback_data' => '/like'
-                    ],
-                    [
-                        'text' => 'Dislike',
-                        'callback_data' => '/dislike'
+                        [
+                            'text' => 'Like',
+                            'callback_data' => '/like'
+                        ],
+                        [
+                            'text' => 'Dislike',
+                            'callback_data' => '/dislike'
+                        ]
                     ]
                 ]
             ];
