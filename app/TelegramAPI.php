@@ -168,7 +168,7 @@ class TelegramAPI
         ]);
     }
 
-    public function senMessageWithLikeButtons($chat_id, $text)
+    public function sendMessageWithLikeButtons($chat_id, $text)
     {
         $buttons = null;
 
