@@ -30,7 +30,7 @@ class TelegramCommandRelationProvider
     {
         foreach ($this->namespaces as $namespace) {
             if (class_exists($namespace . '\\' . ucfirst($name))) {
-                return new $namespace . '\\' . ucfirst($name);
+                return app()->make($namespace . '\\' . ucfirst($name));
             }
         }
 

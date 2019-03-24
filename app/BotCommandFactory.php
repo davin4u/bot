@@ -11,7 +11,7 @@ class BotCommandFactory
         $command = static::$commandsNamespace . '\\' . ucfirst($name) . 'Command';
 
         if (class_exists($command)) {
-            return new $command;
+            return app()->make($command);
         }
 
         return null;
