@@ -2,14 +2,16 @@
 
 namespace App\BotCommands;
 
-use App\TelegramAPI;
+use App\Contracts\TelegramCommandInterface;
+use App\TelegramCommand;
 use App\TelegramMessage;
 
-class HelpCommand
+class HelpCommand extends TelegramCommand implements TelegramCommandInterface
 {
+    /**
+     * @var TelegramMessage
+     */
     protected $message;
-
-    protected $telegram;
 
     protected $commands = [
         '/addrss {url}' => 'Add new rss to your list',
@@ -17,11 +19,9 @@ class HelpCommand
         '/pull 3' => 'Pull 3 (or any other number) items from your feed'
     ];
 
-    public function handle(TelegramMessage $message)
+    public function handle()
     {
-        $this->telegram = new TelegramAPI();
-
-        $this->telegram->sendMessage($message->chat_id, $this->getFormattedMessage());
+        $this->telegram->sendMessage($this->message->chat_id, $this->getFormattedMessage());
     }
 
     protected function getFormattedMessage()

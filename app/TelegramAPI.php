@@ -239,7 +239,7 @@ class TelegramAPI
         ]);
     }
 
-    public function sendMessageWithLikeButtons($chat_id, $text)
+    public function sendMessageWithLikeButtons($chat_id, $text, $relation)
     {
         $keyboard = null;
 
@@ -249,11 +249,11 @@ class TelegramAPI
                     [
                         [
                             'text' => 'Like',
-                            'callback_data' => '/like'
+                            'callback_data' => '{"command": "like", "relation": "' . $relation . '"}'
                         ],
                         [
                             'text' => 'Dislike',
-                            'callback_data' => '/dislike'
+                            'callback_data' => '{"command": "dislike", "relation": "' . $relation . '"}'
                         ]
                     ]
                 ]

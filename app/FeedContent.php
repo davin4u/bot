@@ -38,4 +38,9 @@ class FeedContent extends Model
     {
         return "<b>$this->title</b>\n{$this->description}\n<a href='{$this->link}'>{$this->link}</a>";
     }
+
+    public function getModelName()
+    {
+        return 'FeedContent';
+    }
 }

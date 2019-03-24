@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\BotCommands\PullCommand;
+use App\Contracts\TelegramCommandInterface;
 use Illuminate\Database\Eloquent\Model;
 
 class TelegramMessage extends Model
@@ -38,10 +40,11 @@ class TelegramMessage extends Model
 
     protected function processCommand($commandName)
     {
+        /** @var TelegramCommand $commamd */
         $commamd = BotCommandFactory::get($commandName);
 
         if ($commamd !== null) {
-            $commamd->handle($this);
+            $commamd->setDependencies(['message' => $this])->handle();
         }
     }
 

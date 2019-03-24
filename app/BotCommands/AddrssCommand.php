@@ -2,18 +2,21 @@
 
 namespace App\BotCommands;
 
+use App\Contracts\TelegramCommandInterface;
+use App\TelegramCommand;
 use App\TelegramMessage;
 use App\UserFeed;
 use App\Feed;
 
-class AddrssCommand
+class AddrssCommand extends TelegramCommand implements TelegramCommandInterface
 {
+    /**
+     * @var TelegramMessage
+     */
     protected $message;
 
-    public function handle(TelegramMessage $message)
+    public function handle()
     {
-        $this->message = $message;
-
         if ($url = $this->extractUrl()) {
             $feed = Feed::where('url', $url)->first();
 
