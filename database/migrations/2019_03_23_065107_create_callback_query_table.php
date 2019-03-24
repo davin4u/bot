@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTableUserFeed extends Migration
+class CreateCallbackQueryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,14 @@ class CreateTableUserFeed extends Migration
      */
     public function up()
     {
-        Schema::create('user_feeds', function (Blueprint $table) {
+        Schema::create('callback_query', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger('user_id');
-            $table->integer('feed_id');
+            $table->bigInteger('chat_id')->nullable();
+            $table->bigInteger('message_id')->nullable();
+            $table->bigInteger('inline_message_id')->nullable();
+            $table->text('data')->nullable();
+            $table->tinyInteger('processed')->default(0);
             $table->timestamps();
         });
     }
@@ -28,6 +32,6 @@ class CreateTableUserFeed extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_feeds');
+        Schema::dropIfExists('callback_query');
     }
 }

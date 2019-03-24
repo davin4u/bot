@@ -68,97 +68,168 @@ class TelegramAPI
                     continue;
                 }
 
-                if (property_exists($update, "message")) {
-                    $message = $update->message;
-                    $user = null;
-                    $chat = null;
+                $prepared->push($this->processTelegramUpdate($update));
 
-                    if (property_exists($message, "from")) {
-                        $from = $message->from;
-
-                        $user = TelegramUser::where('id', $from->id)->first();
-
-                        if (! $user) {
-                            TelegramUser::create([
-                                'id' => $from->id,
-                                'is_bot' => $from->is_bot,
-                                'first_name' => property_exists($from, "first_name") ? $from->first_name : '',
-                                'last_name' => property_exists($from, "last_name") ? $from->last_name: '',
-                                'username' => property_exists($from, "username") ? $from->username: '',
-                                'language_code' => property_exists($from, "language_code") ? $from->language_code : ''
-                            ]);
-
-                            $user = TelegramUser::where('id', $from->id)->first();
-                        }
-                    }
-
-                    if (property_exists($message, "chat")) {
-                        $chat = TelegramChat::where('id', $message->chat->id)->first();
-
-                        if (! $chat) {
-                            $chat = TelegramChat::create([
-                                'id' => $message->chat->id,
-                                'type' => $message->chat->type,
-                                'title' => $message->chat->type == 'private' ? NULL : $message->chat->title,
-                                'username' => $message->chat->type != 'private' ? NULL : $message->chat->username
-                            ]);
-                        }
-                    }
-
-                    if ($user && $chat) {
-                        $user_chat = UserChat::where('user_id', $user->id)->where('chat_id', $chat->id)->first();
-
-                        if (! $user_chat) {
-                            $user_chat = UserChat::create([
-                                'user_id' => $user->id,
-                                'chat_id' => $chat->id
-                            ]);
-                        }
-
-                        $telegramMessage = TelegramMessage::where('id', $message->message_id)->where('chat_id', $chat->id)->first();
-
-                        if (! $telegramMessage && property_exists($message, "text")) {
-                            $entities = [];
-
-                            if (property_exists($message, "entities")) {
-                                $entities = $message->entities;
-                            }
-
-                            TelegramMessage::create([
-                                'id' => $message->message_id,
-                                'chat_id' => $chat->id,
-                                'user_id' => $user->id,
-                                'date' => Carbon::createFromTimestamp($message->date)->toDateTimeString(),
-                                'text' => $message->text,
-                                'entities' => $entities
-                            ]);
-
-                            /** @var TelegramMessage $telegramMessage */
-                            $telegramMessage = TelegramMessage::where('id', $message->message_id)->first();
-
-                            $telegramMessage->process();
-                        }
-
-                        if ($telegramMessage) {
-                            $telegramUpdate = TelegramUpdate::create([
-                                'id' => $update->update_id,
-                                'chat_id' => $chat->id,
-                                'message_id' => $telegramMessage->id
-                            ]);
-                        }
-
-                        $prepared->push($telegramUpdate);
-                    }
-                }
+                $this->processCallbackQuery($update);
             }
         }
 
         return $prepared;
     }
 
+    protected function processUser($update) {
+        $user = null;
+
+        if (property_exists($update, "message") && property_exists($update->message, "from")) {
+            $from = $update->message->from;
+
+            $user = TelegramUser::where('id', $from->id)->first();
+
+            if (! $user) {
+                TelegramUser::create([
+                    'id' => $from->id,
+                    'is_bot' => $from->is_bot,
+                    'first_name' => property_exists($from, "first_name") ? $from->first_name : '',
+                    'last_name' => property_exists($from, "last_name") ? $from->last_name: '',
+                    'username' => property_exists($from, "username") ? $from->username: '',
+                    'language_code' => property_exists($from, "language_code") ? $from->language_code : ''
+                ]);
+
+                $user = TelegramUser::where('id', $from->id)->first();
+            }
+        }
+
+        return $user;
+    }
+
+    protected function processChat($update) {
+        $chat = null;
+
+        if (property_exists($update, "message") && property_exists($update->message, "chat")) {
+            $chat = TelegramChat::where('id', $update->message->chat->id)->first();
+
+            if (! $chat) {
+                TelegramChat::create([
+                    'id' => $update->message->chat->id,
+                    'type' => $update->message->chat->type,
+                    'title' => $update->message->chat->type == 'private' ? NULL : $update->message->chat->title,
+                    'username' => $update->message->chat->type != 'private' ? NULL : $update->message->chat->username
+                ]);
+
+                $chat = TelegramChat::where('id', $update->message->chat->id)->first();
+            }
+        }
+
+        return $chat;
+    }
+
+    protected function processUserChatRelation($user = null, $chat = null) {
+        if ($user && $chat) {
+            $user_chat = UserChat::where('user_id', $user->id)->where('chat_id', $chat->id)->first();
+
+            if (! $user_chat) {
+                UserChat::create([
+                    'user_id' => $user->id,
+                    'chat_id' => $chat->id
+                ]);
+            }
+        }
+    }
+
+    protected function processMessage($update, TelegramUser $user, TelegramCaht $chat) {
+        $telegramMessage = null;
+
+        if (property_exists($update, "message")) {
+            $telegramMessage = TelegramMessage::where('id', $update->message->message_id)->where('chat_id', $chat->id)->first();
+
+            if (! $telegramMessage && property_exists($update->message, "text")) {
+                $entities = [];
+
+                if (property_exists($update->message, "entities")) {
+                    $entities = $update->message->entities;
+                }
+
+                TelegramMessage::create([
+                    'id' => $update->message->message_id,
+                    'chat_id' => $chat->id,
+                    'user_id' => $user->id,
+                    'date' => Carbon::createFromTimestamp($update->message->date)->toDateTimeString(),
+                    'text' => $update->message->text,
+                    'entities' => $entities
+                ]);
+
+                /** @var TelegramMessage $telegramMessage */
+                $telegramMessage = TelegramMessage::where('id', $update->message->message_id)->first();
+
+                $telegramMessage->process();
+            }
+        }
+
+        return $telegramMessage;
+    }
+
+    protected function processTelegramUpdate($update)
+    {
+        $user = $this->processUser($update);
+        $chat = $this->processChat($update);
+
+        if ($user && $chat) {
+            $this->processUserChatRelation($user, $chat);
+            $telegramMessage = $this->processMessage($update, $user, $chat);
+
+            if ($telegramMessage) {
+                return TelegramUpdate::create([
+                    'id' => $update->update_id,
+                    'chat_id' => $chat->id,
+                    'message_id' => $telegramMessage->id
+                ]);
+            }
+        }
+
+        return null;
+    }
+
+    protected function processCallbackQuery($update)
+    {
+        if (property_exists($update, "callback_query")) {
+            $from = property_exists($update->callback_query, "from") ? $update->callback_query->from : null;
+            $message = property_exists($update->callback_query, "message") ? $update->callback_query->message : null;
+            $inline_message_id = property_exists($update->callback_query, "inline_message_id") ? $update->callback_query->inline_message_id : null;
+            $callback_data = property_exists($update->callback_query, "data") ? $update->callback_query->data : null;
+
+            $callback = CallbackQuery::where('id', $update->callback_query->id)->first();
+
+            if (! $callback && $from) {
+                $data = [
+                    'id' => $update->callback_query->id,
+                    'user_id' => $from->id,
+                    'inline_message_id' => $inline_message_id,
+                    'data' => $callback_data
+                ];
+
+                if ($message) {
+                    $data['message_id'] = $message->message_id;
+
+                    if (property_exists($message, "chat")) {
+                        $data = array_merge($data, [
+                            'chat_id' => $message->chat->id,
+                        ]);
+                    }
+                }
+
+                /** @var CallbackQuery $callback */
+                $callback = CallbackQuery::create($data);
+
+                if ($callback) {
+                    $callback->process();
+                }
+            }
+        }
+    }
+
     public function sendMessage($chat_id, $text, $buttons = null)
     {
-        $response = $this->client->post($this->base_endpoint . $this->bot_api_key . '/sendMessage', [
+        return $this->client->post($this->base_endpoint . $this->bot_api_key . '/sendMessage', [
             'form_params' => [
                 'chat_id' => $chat_id,
                 'text' => strip_tags($text, '<a><b><i><code><pre>'),
@@ -190,5 +261,13 @@ class TelegramAPI
         }
 
         $this->sendMessage($chat_id, $text, json_encode($keyboard));
+    }
+
+    public function answerCallbackQuery(CallbackQuery $callback, $text = '')
+    {
+        return $this->client->post($this->base_endpoint . $this->bot_api_key . '/answerCallbackQuery', [
+            'callback_query_id' => $callback->id,
+            'text' => $text
+        ]);
     }
 }

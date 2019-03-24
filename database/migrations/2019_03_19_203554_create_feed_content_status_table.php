@@ -15,7 +15,7 @@ class CreateFeedContentStatusTable extends Migration
     {
         Schema::create('feed_content_status', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('user_id');
+            $table->bigInteger('user_id');
             $table->integer('feed_content_id');
             $table->tinyInteger('viewed');
             $table->timestamps();
