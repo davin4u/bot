@@ -136,7 +136,7 @@ class TelegramAPI
         }
     }
 
-    protected function processMessage($update, TelegramUser $user, TelegramCaht $chat) {
+    protected function processMessage($update, TelegramUser $user, TelegramChat $chat) {
         $telegramMessage = null;
 
         if (property_exists($update, "message")) {
